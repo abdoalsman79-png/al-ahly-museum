@@ -21,11 +21,11 @@ const initQuality = (): Quality => {
 };
 
 interface S {
-  lang: Lang; started: boolean; mode: Mode; quality: Quality; mood: Mood; muted: boolean;
+  lang: Lang; view: 'photo' | '3d'; started: boolean; mode: Mode; quality: Quality; mood: Mood; muted: boolean;
   era: EraId | 'all'; selected: Sel | null; focus: Sel | null; helpOpen: boolean; favOpen: boolean;
   libraryOpen: boolean; roomsOpen: boolean; roomIndex: number; libTab: LibTab; tourIndex: number; tourAuto: boolean; zone: string; toast: string | null;
   relicsFound: Set<string>; visited: Set<string>; favorites: Set<string>; justFound: string | null; touch: boolean;
-  setLang: (l: Lang) => void; start: () => void; setMode: (m: Mode) => void; setQuality: (q: Quality) => void;
+  setLang: (l: Lang) => void; setView: (v: 'photo' | '3d') => void; start: () => void; setMode: (m: Mode) => void; setQuality: (q: Quality) => void;
   setMood: (m: Mood) => void; toggleMute: () => void; setEra: (e: EraId | 'all') => void;
   inspect: (s: Sel | null) => void; setFocus: (s: Sel | null) => void; toggleHelp: (v?: boolean) => void; toggleFav: (v?: boolean) => void;
   openLibrary: (tab?: LibTab) => void; closeLibrary: () => void; setTour: (i: number, auto?: boolean) => void;
@@ -34,12 +34,13 @@ interface S {
 }
 
 export const useStore = create<S>((set, get) => ({
-  lang: initLang(), started: false, mode: 'walk', quality: initQuality(), mood: 'heritage', muted: false,
+  lang: initLang(), view: 'photo', started: false, mode: 'walk', quality: initQuality(), mood: 'heritage', muted: false,
   era: 'all', selected: null, focus: null, helpOpen: false, favOpen: false, libraryOpen: false, roomsOpen: false, roomIndex: 0, libTab: 'chronicles',
   tourIndex: 0, tourAuto: false, zone: 'nave', toast: null,
   relicsFound: new Set(load('ahly-relics')), visited: new Set(load('ahly-visited')), favorites: new Set(load('ahly-favs')),
   justFound: null, touch: false,
   setLang: (lang) => { try { localStorage.setItem('ahly-lang', lang); } catch { /* ignore */ } set({ lang }); },
+  setView: (view) => set({ view, selected: null, libraryOpen: false, roomsOpen: false }),
   start: () => set({ started: true }),
   setMode: (mode) => set({ mode, libraryOpen: mode === 'library', selected: null, tourAuto: false }),
   setQuality: (quality) => { try { localStorage.setItem('ahly-quality', quality); } catch { /* ignore */ } set({ quality }); },

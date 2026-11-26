@@ -6,7 +6,7 @@ import { Hud } from './ui/Hud';
 import { Drawer } from './ui/Drawer';
 import { LibraryPanel } from './ui/LibraryPanel';
 import { Intro } from './ui/Intro';
-import { RoomsViewer } from './ui/RoomsViewer';
+import { PhotoMuseum } from './ui/PhotoMuseum';
 import { initAudio, resumeAudio, setMuted, setAmbience, chime } from './audio';
 import { teleport, player, glideTo } from './three/Controller';
 import { RELICS } from './data/relics';
@@ -16,6 +16,7 @@ const Museum = lazy(() => import('./three/Museum'));
 export default function App() {
   const lang = useStore((s) => s.lang);
   const started = useStore((s) => s.started);
+  const view = useStore((s) => s.view);
   const muted = useStore((s) => s.muted);
   const mood = useStore((s) => s.mood);
   const toast = useStore((s) => s.toast);
@@ -39,12 +40,11 @@ export default function App() {
   if (!gl) return (<div className="h-full flex items-center justify-center p-8 text-center"><div className="glass rounded-2xl p-8 max-w-md"><h1 className="font-display text-2xl gold mb-3">{tr(lang, 'title')}</h1><p>{tr(lang, 'noWebgl')}</p></div></div>);
   return (
     <div className="relative h-full w-full select-none">
-      <Suspense fallback={null}><Museum onReady={() => setReady(true)} /></Suspense>
-      <Hud />
+      {view === '3d' && <Suspense fallback={null}><Museum onReady={() => setReady(true)} /></Suspense>}
+      {view === '3d' ? <Hud /> : <PhotoMuseum />}
       <Drawer />
       <LibraryPanel />
-      <RoomsViewer />
-      {(!started || !ready) && <Intro ready={ready} onEnter={begin} />}
+      {(!started || (view === '3d' && !ready)) && <Intro ready={view === '3d' ? ready : true} onEnter={begin} />}
     </div>
   );
 }

@@ -63,7 +63,6 @@ export function Hud() {
               onClick={() => { click(); if (m === 'library') s.openLibrary(); else { if (s.libraryOpen) s.closeLibrary(); s.setMode(m); } }}>{t(m)}</button>
           ))}
         </div>
-        <button className={'btn ' + (s.roomsOpen ? 'btn-on' : '')} data-testid="rooms-btn" onClick={() => { click(); s.openRooms(); }}>🖼 {lang === 'ar' ? 'القاعات المصورة' : 'Photo Halls'}</button>
         <div className="flex-1" />
         <div className="glass flex items-center gap-3 rounded-full px-3 py-1.5 text-xs sm:text-sm" data-testid="counters">
           <span title={t('relicsFound')}>✦ {t('relics')} <b data-testid="relic-count" className="gold">{found}/{RELICS.length}</b></span>
@@ -72,6 +71,7 @@ export function Hud() {
         <button className="btn" data-testid="fav-btn" onClick={() => s.toggleFav()} aria-label={t('favorites')}>★ {s.favorites.size}</button>
         <button className="btn" data-testid="lang-btn" onClick={() => s.setLang(lang === 'en' ? 'ar' : 'en')} aria-label="language">{t('langBtn')}</button>
         <button className="btn" data-testid="mute-btn" onClick={() => s.toggleMute()} aria-label={s.muted ? t('unmute') : t('mute')}>{s.muted ? '🔇' : '🔊'}</button>
+        <button className="btn" data-testid="view-btn" onClick={() => s.setView('photo')}>{lang === 'ar' ? 'القاعات الواقعية' : 'Photoreal rooms'}</button>
         <button className="btn sm:hidden" data-testid="settings-btn" onClick={() => setSettings(!settings)} aria-label={t('quality')}>⚙</button>
         <button className="btn" data-testid="help-btn" onClick={() => s.toggleHelp()} aria-label={t('help')}>?</button>
       </div>
@@ -141,7 +141,7 @@ export function Hud() {
   );
 }
 
-function Help() {
+export function Help() {
   const s = useStore(); const lang = s.lang; const t = (k: Key) => tr(lang, k);
   return (
     <div className="pointer-events-auto absolute inset-0 z-30 flex items-center justify-center bg-black/50 p-4" onClick={() => s.toggleHelp(false)} data-testid="help-modal">
@@ -154,7 +154,7 @@ function Help() {
   );
 }
 
-function Favs() {
+export function Favs() {
   const s = useStore(); const lang = s.lang; const t = (k: Key) => tr(lang, k);
   const items = [...s.favorites].map((key) => { const [kind, id] = key.split(':'); let name = ''; let era = '';
     if (kind === 'trophy') name = pick(TROPHIES.find((x) => x.id === id)?.name ?? { en: id, ar: id }, lang);

@@ -1,51 +1,56 @@
 import { L } from './types';
 
-export type Target = { kind: 'trophy' | 'statue' | 'frame'; id: string } | { goto: number };
-export interface Hotspot { x: number; y: number; label: L; target: Target }
-export interface Room {
-  id: string; src: string; title: L; text: L;
-  // Ken Burns: start and end view, as scale and transform origin in percent
-  from: { z: number; x: number; y: number }; to: { z: number; x: number; y: number };
-  hotspots: Hotspot[];
-}
+export type Target =
+  | { kind: 'trophy' | 'statue' | 'frame'; id: string }
+  | { picker: { kind: 'trophy' | 'statue' | 'frame'; ids: string[]; title: L } }
+  | { door: string }
+  | { library: true }
+  | { relic: number };
 
-// goto indexes refer to WAYPOINTS: 0 vault, 1 statues, 2 gallery, 3 relics, 4 library
+export interface Hotspot { x: number; y: number; label?: L; target: Target }
+export interface Room { id: string; src: string; title: L; text: L; hotspots: Hotspot[] }
+
+const CL = ['cl-1982', 'cl-2005-06', 'cl-2012'];
+// Room scenes are photoreal images. Hotspot coordinates are percent of the image.
+// New rooms are added by appending an entry here and dropping the image in /public/rooms.
 export const ROOMS: Room[] = [
   { id: 'busts', src: '/rooms/busts.jpg', title: { en: 'Hall of Presidents and Builders', ar: 'قاعة الرؤساء والبنّائين' },
-    text: { en: 'Bronze busts on carved plinths before red velvet, with the portrait wall of the men who led the club.', ar: 'تماثيل نصفية برونزية على قواعد خشبية منحوتة أمام المخمل الأحمر، وبجوارها جدار صور من قادوا النادي.' },
-    from: { z: 1, x: 50, y: 50 }, to: { z: 1.15, x: 60, y: 55 },
+    text: { en: 'Bronze busts before red velvet, with the portrait wall of the men who led the club.', ar: 'تماثيل نصفية برونزية أمام المخمل الأحمر، وبجوارها جدار صور من قادوا النادي.' },
     hotspots: [
-      { x: 52, y: 48, label: { en: 'Saleh Selim', ar: 'صالح سليم' }, target: { kind: 'statue', id: 'saleh-selim' } },
-      { x: 68, y: 52, label: { en: 'Mahmoud El Khatib', ar: 'محمود الخطيب' }, target: { kind: 'statue', id: 'el-khatib' } },
-      { x: 80, y: 88, label: { en: 'Walk to the Hall of Statues', ar: 'امشِ إلى قاعة التماثيل' }, target: { goto: 1 } }] },
-  { id: 'busts-close', src: '/rooms/busts.jpg', title: { en: 'Close-up: the Busts', ar: 'لقطة قريبة: التماثيل النصفية' },
-    text: { en: 'Each plinth carries a brass plaque with the name and years of service.', ar: 'كل قاعدة تحمل لوحة نحاسية بالاسم وسنوات الخدمة.' },
-    from: { z: 1.9, x: 78, y: 60 }, to: { z: 2.3, x: 70, y: 55 }, hotspots: [] },
-  { id: 'cabinet', src: '/rooms/cabinet.jpg', title: { en: 'The Great Trophy Cabinet', ar: 'دولاب البطولات الكبير' },
-    text: { en: 'Three shelves of continental and world trophies lit from above, with the club history photo wall beside it.', ar: 'ثلاثة رفوف من كؤوس البطولات القارية والعالمية تحت الإضاءة العلوية، وبجانبها جدار صور تاريخ النادي.' },
-    from: { z: 1, x: 50, y: 50 }, to: { z: 1.2, x: 50, y: 45 },
-    hotspots: [{ x: 55, y: 50, label: { en: 'Walk to the 3D Trophy Vault', ar: 'امشِ إلى دولاب البطولات (ثلاثي الأبعاد)' }, target: { goto: 0 } }] },
-  { id: 'cabinet-close', src: '/rooms/cabinet.jpg', title: { en: 'Close-up: Shields and Cups', ar: 'لقطة قريبة: الدروع والكؤوس' },
-    text: { en: 'Engraved shields sit between the tall continental cups.', ar: 'دروع منقوشة بين الكؤوس القارية الطويلة.' },
-    from: { z: 2.2, x: 58, y: 52 }, to: { z: 2.6, x: 45, y: 40 }, hotspots: [] },
+      { x: 52, y: 45, label: { en: 'Saleh Selim', ar: 'صالح سليم' }, target: { kind: 'statue', id: 'saleh-selim' } },
+      { x: 68, y: 50, label: { en: 'Mahmoud El Khatib', ar: 'محمود الخطيب' }, target: { kind: 'statue', id: 'el-khatib' } },
+      { x: 20, y: 62, label: { en: 'Presidents and builders', ar: 'الرؤساء والبنّاؤون' }, target: { picker: { kind: 'statue', ids: ['omar-lotfy', 'amin-sami', 'mitchell-innes', 'saleh-selim', 'el-khatib', 'manuel-jose'], title: { en: 'The men behind the club', ar: 'الرجال خلف النادي' } } } },
+      { x: 96, y: 52, label: { en: 'Hall of Statues', ar: 'قاعة التماثيل' }, target: { door: 'statues' } },
+      { x: 4, y: 52, label: { en: 'Trophy Cabinet', ar: 'دولاب البطولات' }, target: { door: 'cabinet' } },
+      { x: 30, y: 90, target: { relic: 0 } }, { x: 60, y: 93, target: { relic: 1 } }, { x: 88, y: 80, target: { relic: 2 } }] },
   { id: 'statues', src: '/rooms/statues.jpg', title: { en: 'The Statues Hall', ar: 'قاعة التماثيل' },
-    text: { en: 'Life-size bronze figures of club legends under spotlights, facing the "Generation of Titles" photo wall.', ar: 'تماثيل برونزية بالحجم الطبيعي لأساطير النادي تحت الأضواء، قبالة جدار صور «جيل البطولات».' },
-    from: { z: 1, x: 50, y: 50 }, to: { z: 1.15, x: 65, y: 50 },
+    text: { en: 'Bronze figures of club legends under spotlights, facing the "Generation of Titles" photo wall.', ar: 'تماثيل برونزية لأساطير النادي تحت الأضواء، قبالة جدار صور «جيل البطولات».' },
     hotspots: [
       { x: 53, y: 35, label: { en: 'Saleh Selim', ar: 'صالح سليم' }, target: { kind: 'statue', id: 'saleh-selim' } },
       { x: 68, y: 42, label: { en: 'Mahmoud El Khatib', ar: 'محمود الخطيب' }, target: { kind: 'statue', id: 'el-khatib' } },
-      { x: 80, y: 88, label: { en: 'Walk to the 3D Statues', ar: 'امشِ إلى التماثيل (ثلاثي الأبعاد)' }, target: { goto: 1 } }] },
-  { id: 'statues-wall', src: '/rooms/statues.jpg', title: { en: 'Close-up: Generation of Titles', ar: 'لقطة قريبة: جيل البطولات' },
-    text: { en: 'Black and white team photographs from the club\'s golden eras.', ar: 'صور فرق بالأبيض والأسود من العصور الذهبية للنادي.' },
-    from: { z: 2.3, x: 20, y: 38 }, to: { z: 2.6, x: 28, y: 45 }, hotspots: [] },
+      { x: 20, y: 40, label: { en: 'Generation of Titles', ar: 'جيل البطولات' }, target: { picker: { kind: 'statue', ids: ['omar-lotfy', 'amin-sami', 'mitchell-innes', 'saleh-selim', 'el-khatib', 'manuel-jose'], title: { en: 'Legends of the club', ar: 'أساطير النادي' } } } },
+      { x: 96, y: 55, label: { en: 'Great Moments', ar: 'اللحظات الكبرى' }, target: { door: 'moments' } },
+      { x: 4, y: 55, label: { en: 'Presidents Hall', ar: 'قاعة الرؤساء' }, target: { door: 'busts' } },
+      { x: 12, y: 85, target: { relic: 3 } }, { x: 45, y: 92, target: { relic: 4 } }, { x: 84, y: 88, target: { relic: 5 } }] },
   { id: 'moments', src: '/rooms/moments.jpg', title: { en: 'Glass Cases of Great Moments', ar: 'فاترينات اللحظات الكبرى' },
-    text: { en: 'Diorama cases: Japan 2006, the 2020 derby final and the Aboutrika era, with the 1980s generation on the right.', ar: 'فاترينات تجسّد اليابان ٢٠٠٦ ونهائي القمة ٢٠٢٠ وزمن أبوتريكة، وعلى اليمين جيل الثمانينيات.' },
-    from: { z: 1, x: 50, y: 50 }, to: { z: 1.15, x: 40, y: 50 },
+    text: { en: 'Diorama cases: Japan 2006, the 2020 derby final, the Aboutrika era and the 1980s generation.', ar: 'فاترينات تجسّد اليابان ٢٠٠٦ ونهائي القمة ٢٠٢٠ وزمن أبوتريكة وجيل الثمانينيات.' },
     hotspots: [
       { x: 15, y: 40, label: { en: 'Aboutrika in Yokohama', ar: 'أبوتريكة في يوكوهاما' }, target: { kind: 'frame', id: 'l-aboutrika' } },
-      { x: 36, y: 50, label: { en: 'The Derby Final in an Empty Stadium', ar: 'نهائي القمة في ملعب خالٍ' }, target: { kind: 'frame', id: 'm-2020' } },
-      { x: 80, y: 88, label: { en: 'Walk to the Moments Gallery', ar: 'امشِ إلى معرض اللحظات' }, target: { goto: 2 } }] },
-  { id: 'moments-close', src: '/rooms/moments.jpg', title: { en: 'Close-up: Japan 2006 Case', ar: 'لقطة قريبة: فاترينة اليابان ٢٠٠٦' },
-    text: { en: 'The Club World Cup podium scene in miniature.', ar: 'مشهد منصة كأس العالم للأندية بحجم مصغّر.' },
-    from: { z: 2.5, x: 14, y: 50 }, to: { z: 2.9, x: 14, y: 42 }, hotspots: [] }
+      { x: 36, y: 50, label: { en: 'The Derby Final 2020', ar: 'نهائي القمة ٢٠٢٠' }, target: { kind: 'frame', id: 'm-2020' } },
+      { x: 66, y: 48, label: { en: 'The 2006 era', ar: 'زمن ٢٠٠٦' }, target: { picker: { kind: 'frame', ids: ['l-aboutrika', 'm-2005', 'm-2002'], title: { en: 'The 2006 era', ar: 'زمن ٢٠٠٦' } } } },
+      { x: 90, y: 45, label: { en: 'The 1980s generation', ar: 'جيل الثمانينيات' }, target: { picker: { kind: 'frame', ids: ['m-1982', 'm-1984', 'm-1987', 'm-1977'], title: { en: 'Seventies and eighties', ar: 'السبعينيات والثمانينيات' } } } },
+      { x: 96, y: 90, label: { en: 'Trophy Cabinet', ar: 'دولاب البطولات' }, target: { door: 'cabinet' } },
+      { x: 4, y: 90, label: { en: 'Statues Hall', ar: 'قاعة التماثيل' }, target: { door: 'statues' } },
+      { x: 8, y: 80, target: { relic: 6 } }, { x: 50, y: 92, target: { relic: 7 } }, { x: 78, y: 90, target: { relic: 8 } }] },
+  { id: 'cabinet', src: '/rooms/cabinet.jpg', title: { en: 'The Great Trophy Cabinet', ar: 'دولاب البطولات الكبير' },
+    text: { en: 'Three shelves of continental and world trophies, lit from above, beside the club history photo wall.', ar: 'ثلاثة رفوف من كؤوس البطولات القارية والعالمية تحت الإضاءة العلوية، بجانب جدار صور تاريخ النادي.' },
+    hotspots: [
+      { x: 30, y: 30, label: { en: 'Champions League cups', ar: 'كؤوس دوري الأبطال' }, target: { picker: { kind: 'trophy', ids: ['__cl'], title: { en: 'African Champions League', ar: 'دوري أبطال أفريقيا' } } } },
+      { x: 54, y: 50, label: { en: 'Shields and Super Cups', ar: 'الدروع والسوبر' }, target: { picker: { kind: 'trophy', ids: ['__other'], title: { en: 'Shields, Super Cups and more', ar: 'الدروع والسوبر وأكثر' } } } },
+      { x: 12, y: 45, label: { en: 'Club photo wall', ar: 'جدار الصور' }, target: { picker: { kind: 'frame', ids: ['m-1907', 'l-hegazi', 'm-1923', 'l-tetsh', 'm-1948'], title: { en: 'The early years', ar: 'السنوات الأولى' } } } },
+      { x: 88, y: 40, label: { en: 'Heritage Library', ar: 'مكتبة التراث' }, target: { library: true } },
+      { x: 4, y: 90, label: { en: 'Great Moments', ar: 'اللحظات الكبرى' }, target: { door: 'moments' } },
+      { x: 96, y: 90, label: { en: 'Presidents Hall', ar: 'قاعة الرؤساء' }, target: { door: 'busts' } },
+      { x: 25, y: 85, target: { relic: 9 } }, { x: 62, y: 90, target: { relic: 10 } }, { x: 78, y: 78, target: { relic: 11 } }, { x: 40, y: 70, target: { relic: 12 } }] }
 ];
+void CL;
