@@ -1,0 +1,24 @@
+@import '@fontsource/cairo/400.css';
+@import '@fontsource/cairo/600.css';
+@import '@fontsource/cairo/700.css';
+@import '@fontsource/cairo/arabic-400.css';
+@import '@fontsource/cairo/arabic-600.css';
+@import '@fontsource/cairo/arabic-700.css';
+@import '@fontsource/playfair-display/600.css';
+@import '@fontsource/playfair-display/700.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root { height: 100%; margin: 0; background: #0d0709; color: #f3e9d2; overflow: hidden; font-family: Cairo, system-ui, sans-serif; }
+canvas { display: block; outline: none; }
+.glass { background: rgba(18, 8, 11, 0.72); backdrop-filter: blur(10px); border: 1px solid rgba(212, 169, 79, 0.28); }
+.btn { @apply rounded-full px-3 py-1.5 text-sm font-semibold transition select-none; border: 1px solid rgba(212,169,79,.35); background: rgba(18,8,11,.6); color: #f3e9d2; }
+.btn:hover { background: rgba(122,10,28,.75); }
+.btn-on { background: #c8102e !important; border-color: #f6d98a; color: #fff; }
+.gold { color: #d4a94f; }
+.scroll::-webkit-scrollbar { width: 8px; } .scroll::-webkit-scrollbar-thumb { background: rgba(212,169,79,.4); border-radius: 8px; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px);} to { opacity: 1; transform: none; } }
+.fade-up { animation: fadeUp .5s ease both; }
+@keyframes pop { 0% { transform: scale(.7); opacity: 0 } 60% { transform: scale(1.06); opacity: 1 } 100% { transform: scale(1); opacity: 1 } }
+.pop { animation: pop .45s ease both; }
