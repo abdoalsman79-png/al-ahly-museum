@@ -19,25 +19,34 @@ export function wrap(c: CanvasRenderingContext2D, text: string, maxW: number): s
 const FONT = (w: number, px: number, serif = false) => `${w} ${px}px ${serif ? '"Playfair Display", Cairo' : 'Cairo'}, sans-serif`;
 
 export const floorTexture = () => canvasTex(1024, 1024, (c, w, h) => {
-  const n = 4; const s = w / n;
+  const n = 2; const s = w / n;
   for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
-    const base = 205 + Math.random() * 18;
-    c.fillStyle = `rgb(${base},${base - 16},${base - 48})`; c.fillRect(i * s, j * s, s, s);
-    for (let k = 0; k < 26; k++) {
-      c.strokeStyle = `rgba(${150 + Math.random() * 40},${120 + Math.random() * 30},${80 + Math.random() * 20},${0.05 + Math.random() * 0.1})`;
-      c.lineWidth = 0.6 + Math.random() * 2.4; c.beginPath();
+    const base = 224 + Math.random() * 12;
+    const g = c.createLinearGradient(i * s, j * s, (i + 1) * s, (j + 1) * s); g.addColorStop(0, `rgb(${base},${base - 8},${base - 22})`); g.addColorStop(1, `rgb(${base - 14},${base - 20},${base - 36})`);
+    c.fillStyle = g; c.fillRect(i * s, j * s, s, s);
+    c.save(); c.beginPath(); c.rect(i * s, j * s, s, s); c.clip();
+    for (let k = 0; k < 9; k++) {
+      c.strokeStyle = `rgba(${120 + Math.random() * 40},${105 + Math.random() * 30},${95 + Math.random() * 25},${0.1 + Math.random() * 0.28})`;
+      c.lineWidth = 0.6 + Math.random() * 2.6; c.beginPath();
       let x = i * s + Math.random() * s, y = j * s + Math.random() * s; c.moveTo(x, y);
-      for (let q = 0; q < 4; q++) { x += (Math.random() - 0.3) * 70; y += (Math.random() - 0.5) * 40; c.lineTo(x, y); }
+      for (let q = 0; q < 7; q++) { const nx = x + (Math.random() - 0.35) * 200, ny = y + (Math.random() - 0.5) * 120; c.quadraticCurveTo(x + (Math.random() - 0.5) * 80, y + (Math.random() - 0.5) * 80, nx, ny); x = nx; y = ny; }
       c.stroke();
     }
-    c.strokeStyle = 'rgba(80,58,36,.55)'; c.lineWidth = 3; c.strokeRect(i * s + 1, j * s + 1, s - 2, s - 2);
+    for (let k = 0; k < 60; k++) { c.fillStyle = `rgba(255,250,240,${Math.random() * 0.05})`; c.beginPath(); c.arc(i * s + Math.random() * s, j * s + Math.random() * s, 6 + Math.random() * 40, 0, 7); c.fill(); }
+    c.restore();
+    c.strokeStyle = 'rgba(110,96,84,.5)'; c.lineWidth = 2; c.strokeRect(i * s + 1, j * s + 1, s - 2, s - 2);
   }
 }, [8, 16]);
 
 export const wallTexture = () => canvasTex(512, 512, (c, w, h) => {
-  c.fillStyle = '#e4d3b2'; c.fillRect(0, 0, w, h);
-  for (let i = 0; i < 4000; i++) { c.fillStyle = `rgba(${120 + Math.random() * 80},${100 + Math.random() * 60},70,${Math.random() * 0.06})`; c.fillRect(Math.random() * w, Math.random() * h, 2 + Math.random() * 6, 2 + Math.random() * 6); }
-}, [8, 2]);
+  c.fillStyle = '#b3a590'; c.fillRect(0, 0, w, h);
+  const bw = 256, bh = 128;
+  for (let r = 0; r < 4; r++) for (let q = -1; q < 3; q++) {
+    const x = q * bw + (r % 2 ? bw / 2 : 0), y = r * bh; const v = Math.random() * 22 - 11;
+    c.fillStyle = `rgb(${178 + v},${164 + v},${142 + v})`; c.fillRect(x + 2, y + 2, bw - 4, bh - 4);
+    for (let k = 0; k < 400; k++) { c.fillStyle = `rgba(${90 + Math.random() * 90},${80 + Math.random() * 70},${60 + Math.random() * 50},${Math.random() * 0.07})`; c.fillRect(x + Math.random() * bw, y + Math.random() * bh, 1 + Math.random() * 4, 1 + Math.random() * 4); }
+  }
+}, [6, 1.5]);
 
 export const carpetTexture = () => canvasTex(256, 1024, (c, w, h) => {
   c.fillStyle = '#7a0a1c'; c.fillRect(0, 0, w, h);

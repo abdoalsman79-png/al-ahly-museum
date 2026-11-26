@@ -3,8 +3,9 @@ import { Canvas } from '@react-three/fiber';
 import { EffectComposer, Bloom, Vignette, Sepia, ToneMapping } from '@react-three/postprocessing';
 import { ToneMappingMode } from 'postprocessing';
 import { useStore } from '../store';
-import { Environment, Lighting, Architecture, Dust } from './Hall';
+import { Lighting, Architecture, Dust } from './Hall';
 import { Trophies, Statues, Frames, Library3D, Relics } from './Exhibits';
+import { WarmEnvironment } from './realism';
 import { Controller, SceneReady } from './Controller';
 import { START, EYE } from './layout';
 import { setAmbience } from '../audio';
@@ -45,7 +46,7 @@ export default function Museum({ onReady }: { onReady: () => void }) {
       style={{ touchAction: 'none' }}
     >
       <Suspense fallback={null}>
-        <Environment />
+        <WarmEnvironment />
         <Lighting />
         <Architecture />
         <Trophies />

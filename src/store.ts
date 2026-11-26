@@ -34,7 +34,7 @@ interface S {
 }
 
 export const useStore = create<S>((set, get) => ({
-  lang: initLang(), view: 'photo', started: false, mode: 'walk', quality: initQuality(), mood: 'heritage', muted: false,
+  lang: initLang(), view: '3d', started: false, mode: 'walk', quality: initQuality(), mood: 'heritage', muted: false,
   era: 'all', selected: null, focus: null, helpOpen: false, favOpen: false, libraryOpen: false, roomsOpen: false, roomIndex: 0, libTab: 'chronicles',
   tourIndex: 0, tourAuto: false, zone: 'nave', toast: null,
   relicsFound: new Set(load('ahly-relics')), visited: new Set(load('ahly-visited')), favorites: new Set(load('ahly-favs')),

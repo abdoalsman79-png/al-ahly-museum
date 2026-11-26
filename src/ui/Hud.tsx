@@ -71,7 +71,7 @@ export function Hud() {
         <button className="btn" data-testid="fav-btn" onClick={() => s.toggleFav()} aria-label={t('favorites')}>★ {s.favorites.size}</button>
         <button className="btn" data-testid="lang-btn" onClick={() => s.setLang(lang === 'en' ? 'ar' : 'en')} aria-label="language">{t('langBtn')}</button>
         <button className="btn" data-testid="mute-btn" onClick={() => s.toggleMute()} aria-label={s.muted ? t('unmute') : t('mute')}>{s.muted ? '🔇' : '🔊'}</button>
-        <button className="btn" data-testid="view-btn" onClick={() => s.setView('photo')}>{lang === 'ar' ? 'القاعات الواقعية' : 'Photoreal rooms'}</button>
+        <button className="btn" data-testid="view-btn" onClick={() => s.setView('photo')}>{lang === 'ar' ? 'جولة بالصور (إضافي)' : 'Photo views (extra)'}</button>
         <button className="btn sm:hidden" data-testid="settings-btn" onClick={() => setSettings(!settings)} aria-label={t('quality')}>⚙</button>
         <button className="btn" data-testid="help-btn" onClick={() => s.toggleHelp()} aria-label={t('help')}>?</button>
       </div>

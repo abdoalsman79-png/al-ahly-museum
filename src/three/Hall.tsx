@@ -79,7 +79,7 @@ export function Architecture() {
   return (
     <group>
       {/* floor */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow><planeGeometry args={[w, l]} /><meshStandardMaterial map={floorTex} roughness={0.26} metalness={0.05} envMapIntensity={0.8} /></mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow><planeGeometry args={[w, l]} /><meshStandardMaterial map={floorTex} roughness={0.12} metalness={0.08} envMapIntensity={1.1} /></mesh>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, 0]} receiveShadow><planeGeometry args={[6, 60]} /><meshStandardMaterial map={carpet} roughness={0.9} /></mesh>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}><circleGeometry args={[3, 64]} /><meshStandardMaterial map={crest} roughness={0.35} metalness={0.15} /></mesh>
       {/* walls */}

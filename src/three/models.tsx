@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { MAT, tintMat } from './materials';
 import { TrophyModel as TM } from '../data/types';
 
-const lathe = (pts: [number, number][], seg = 40) => new THREE.LatheGeometry(pts.map(([x, y]) => new THREE.Vector2(x, y)), seg);
+const lathe = (pts: [number, number][], seg = 48) => { const c = new THREE.SplineCurve(pts.map(([x, y]) => new THREE.Vector2(x, y))); const sm = c.getPoints(pts.length * 6).map((p) => new THREE.Vector2(Math.max(0, p.x), p.y)); return new THREE.LatheGeometry(sm, seg); };
 
 // Procedural trophies, ~1 unit tall, origin at the base.
 export function TrophyMesh({ model, tint }: { model: TM; tint: 'gold' | 'silver' | 'bronze' | 'red' }) {
@@ -23,7 +23,7 @@ export function TrophyMesh({ model, tint }: { model: TM; tint: 'gold' | 'silver'
     <group>
       <mesh geometry={geos.big} material={mat} castShadow />
       <mesh geometry={geos.handle} material={mat} position={[0.34, 0.76, 0]} rotation={[0, 0, -Math.PI * 0.62]} castShadow />
-      <mesh geometry={geos.handle} material={mat} position={[-0.34, 0.76, 0]} rotation={[0, 0, Math.PI * 0.62 - Math.PI * 1.15 + Math.PI * 1.15]} scale={[-1, 1, 1]} castShadow />
+      <group scale={[-1, 1, 1]}><mesh geometry={geos.handle} material={mat} position={[0.34, 0.76, 0]} rotation={[0, 0, -Math.PI * 0.62]} castShadow /></group>
       <mesh position={[0, 0.03, 0]} material={MAT.dark}><cylinderGeometry args={[0.3, 0.32, 0.06, 32]} /></mesh>
       <mesh position={[0, 0.3, 0]} material={MAT.red}><torusGeometry args={[0.065, 0.018, 8, 20]} /></mesh>
     </group>
@@ -33,7 +33,7 @@ export function TrophyMesh({ model, tint }: { model: TM; tint: 'gold' | 'silver'
       <mesh geometry={geos.cup} material={mat} castShadow />
       <mesh geometry={geos.lid} material={mat} position={[0, 0.7, 0]} castShadow />
       <mesh geometry={geos.handleS} material={mat} position={[0.27, 0.46, 0]} rotation={[0, 0, -Math.PI * 0.6]} />
-      <mesh geometry={geos.handleS} material={mat} position={[-0.27, 0.46, 0]} rotation={[0, 0, Math.PI * 0.6]} scale={[-1, 1, 1]} />
+      <group scale={[-1, 1, 1]}><mesh geometry={geos.handleS} material={mat} position={[0.27, 0.46, 0]} rotation={[0, 0, -Math.PI * 0.6]} /></group>
       <mesh position={[0, 0.02, 0]} material={MAT.dark}><cylinderGeometry args={[0.26, 0.28, 0.05, 28]} /></mesh>
     </group>
   );
