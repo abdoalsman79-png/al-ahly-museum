@@ -79,7 +79,7 @@ export function Controller() {
     const onKey = (e: KeyboardEvent) => {
       const s = st(); const k = e.key.toLowerCase();
       if (e.type === 'keydown') {
-        if (k === 'escape') { if (s.selected) s.inspect(null); else if (s.libraryOpen) s.closeLibrary(); else if (s.helpOpen) s.toggleHelp(false); else if (s.favOpen) s.toggleFav(false); return; }
+        if (k === 'escape') { if (s.selected) s.inspect(null); else if (s.roomsOpen) s.closeRooms(); else if (s.libraryOpen) s.closeLibrary(); else if (s.helpOpen) s.toggleHelp(false); else if (s.favOpen) s.toggleFav(false); return; }
         if (!s.started) return;
         if (k === 'm') { s.toggleMute(); return; }
         if (k === 'l' && !(e.target instanceof HTMLInputElement)) { s.setLang(s.lang === 'en' ? 'ar' : 'en'); return; }
@@ -117,7 +117,7 @@ export function Controller() {
     const turn = (keys.has('arrowleft') ? 1 : 0) - (keys.has('arrowright') ? 1 : 0);
     if (turn) { player.tyaw += turn * dt * 1.8; glide.active = false; }
     const f = THREE.MathUtils.clamp(kf + input.joyY, -1, 1), sd = THREE.MathUtils.clamp(ks + input.joyX, -1, 1);
-    const inputActive = !s.libraryOpen && !s.selected && s.started;
+    const inputActive = !s.libraryOpen && !s.selected && !s.roomsOpen && s.started;
     if (glide.active) {
       glide.t += dt / glide.dur; const e = ease(Math.min(1, glide.t));
       player.x = glide.from.x + (glide.to.x - glide.from.x) * e; player.z = glide.from.z + (glide.to.z - glide.from.z) * e;

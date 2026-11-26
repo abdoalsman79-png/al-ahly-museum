@@ -29,10 +29,12 @@ export function webglOk(): boolean {
 export default function Museum({ onReady }: { onReady: () => void }) {
   const q = useStore((s) => s.quality); const mood = useStore((s) => s.mood);
   const [key, setKey] = useState(0);
+  const roomsOpen = useStore((s) => s.roomsOpen);
   useEffect(() => { setAmbience(mood); }, [mood]);
   return (
     <Canvas
       key={key}
+      frameloop={roomsOpen ? 'never' : 'always'}
       shadows={q !== 'low'}
       dpr={q === 'high' ? [1, 2] : q === 'medium' ? [1, 1.4] : 1}
       camera={{ fov: 68, near: 0.1, far: 140, position: [START.x, EYE, START.z] }}

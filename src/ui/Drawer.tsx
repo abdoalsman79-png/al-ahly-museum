@@ -73,7 +73,7 @@ export function Drawer() {
     const x = FIGURES.find((a) => a.id === sel.id)!; title = p(x.name); kind = t('statueKind');
     listen = [p(x.name), p(x.role), p(x.philosophy), p(x.impact)].join('. ');
     body = (<>
-      <Turntable scale={1.5} y={0.9}><Bust tone={x.tone} look={x.look} /></Turntable>
+      <Turntable scale={0.9} y={1.0}><Bust tone={x.tone} look={x.look} /></Turntable>
       <p className="mt-2 text-sm"><span className="gold">{p(x.role)}</span> · {p(x.lifespan)}</p>
       <p className="text-xs text-ahly-paper/70">{t('knownAs')}: {p(x.epithet)}</p>
       <Sec title={t('philosophy')}>{p(x.philosophy)}</Sec><Sec title={t('impactLabel')}>{p(x.impact)}</Sec>

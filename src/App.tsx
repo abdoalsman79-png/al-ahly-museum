@@ -6,6 +6,7 @@ import { Hud } from './ui/Hud';
 import { Drawer } from './ui/Drawer';
 import { LibraryPanel } from './ui/LibraryPanel';
 import { Intro } from './ui/Intro';
+import { RoomsViewer } from './ui/RoomsViewer';
 import { initAudio, resumeAudio, setMuted, setAmbience, chime } from './audio';
 import { teleport, player, glideTo } from './three/Controller';
 import { RELICS } from './data/relics';
@@ -42,6 +43,7 @@ export default function App() {
       <Hud />
       <Drawer />
       <LibraryPanel />
+      <RoomsViewer />
       {(!started || !ready) && <Intro ready={ready} onEnter={begin} />}
     </div>
   );

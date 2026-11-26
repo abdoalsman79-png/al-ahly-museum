@@ -18,7 +18,7 @@ async function run(w, h, tag, mobile) {
   await p.screenshot({ path: `${out}/${tag}-start.png` });
   const M = () => p.evaluate(() => window.__museum);
   const go = async (name, x, z, yaw) => { await p.evaluate((x, z, yaw) => { window.__museum.teleport(x, z, yaw); }, x, z, yaw); await new Promise(r => setTimeout(r, 900)); await p.screenshot({ path: `${out}/${tag}-${name}.png` }); };
-  if (process.env.PART==='a') { await go('statues', 7, 0, -Math.PI / 2); await go('gallery', -9.5, 0, Math.PI / 2); await go('library', 0, 19, Math.PI); await b.close(); process.exit(0); }
+  if (process.env.PART==='zz') { await go('statues', 7, 0, -Math.PI / 2); await go('gallery', -9.5, 0, Math.PI / 2); await go('library', 0, 19, Math.PI); await b.close(); process.exit(0); }
   return p;
 }
 const p = await run(1440, 900, 'd');

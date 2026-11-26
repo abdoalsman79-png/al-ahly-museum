@@ -1,0 +1,16 @@
+import puppeteer from 'puppeteer-core';
+const url=process.argv[2], mob=process.argv[3]==='m'; const out='/tmp/t4'+(mob?'m':'d'); import fs from 'fs'; fs.mkdirSync(out,{recursive:true});
+const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:'new',args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
+const p=await b.newPage(); await p.setViewport(mob?{width:390,height:844,isMobile:true,hasTouch:true}:{width:1440,height:900});
+const logs=[]; p.on('console',m=>{if(m.type()==='error'&&!/insights|404/.test(m.text()))logs.push(m.text().slice(0,140))}); p.on('pageerror',e=>logs.push('ERR '+String(e).slice(0,200)));
+await p.goto(url,{waitUntil:'load'}); await p.evaluate(()=>localStorage.setItem('ahly-quality','low')); await p.reload({waitUntil:'load'});
+await p.waitForSelector('[data-testid=enter]:not([disabled])',{timeout:60000}); await p.screenshot({path:out+'/intro.png'}); await p.click('[data-testid=enter]'); await new Promise(r=>setTimeout(r,1000));
+const S=(f,...a)=>p.evaluate(f,...a); const w=(t)=>new Promise(r=>setTimeout(r,t));
+await S(()=>window.__museum.store.getState().openRooms(0)); await w(2500); await p.screenshot({path:out+'/rooms0.png'});
+console.log('hotspots', await S(()=>document.querySelectorAll('[data-testid=hotspot]').length));
+await S(()=>document.querySelector('[data-testid=hotspot]').click()); await w(1500); console.log('drawer', await S(()=>document.querySelector('[data-testid=drawer-title]')?.textContent)); await p.screenshot({path:out+'/rooms-drawer.png'});
+await p.keyboard.press('Escape'); await w(400); console.log('rooms still open', await S(()=>!!document.querySelector('[data-testid=rooms]')));
+await S(()=>window.__museum.store.getState().setLang('ar')); await S(()=>window.__museum.store.getState().setRoom(6)); await w(2500); await p.screenshot({path:out+'/rooms-ar.png'});
+await p.keyboard.press('Escape'); await w(400); console.log('closed', await S(()=>!document.querySelector('[data-testid=rooms]')));
+await S(()=>window.__museum.store.getState().inspect({kind:'trophy',id:'cl-2012'})); await w(2000); await p.screenshot({path:out+'/dossier-ar.png'});
+console.log('ERRS',JSON.stringify([...new Set(logs)])); await b.close();

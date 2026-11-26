@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useStore, Mood, Quality } from '../store';
 import { tr, pick, Key } from '../data/i18n';
 import { ERAS } from '../data/types';
@@ -33,6 +33,7 @@ function Joystick() {
 
 export function Hud() {
   const s = useStore(); const lang = s.lang; const t = (k: Key) => tr(lang, k);
+  const [settings, setSettings] = useState(false);
   const touchCapable = useRef(typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0));
   useEffect(() => { if (touchCapable.current) s.setTouch(true); }, []); // eslint-disable-line
   if (!s.started) return null;
@@ -50,7 +51,7 @@ export function Hud() {
   const quals: Quality[] = ['high', 'medium', 'low'];
   const toast = s.toast;
   const relic = toast?.startsWith('relic:') ? RELICS.find((r) => r.id === toast.slice(6)) : null;
-  const modal = !!s.selected || s.libraryOpen;
+  const modal = !!s.selected || s.libraryOpen || s.roomsOpen;
   return (
     <div className="pointer-events-none absolute inset-0 z-10" data-testid="hud">
       {/* top bar */}
@@ -62,6 +63,7 @@ export function Hud() {
               onClick={() => { click(); if (m === 'library') s.openLibrary(); else { if (s.libraryOpen) s.closeLibrary(); s.setMode(m); } }}>{t(m)}</button>
           ))}
         </div>
+        <button className={'btn ' + (s.roomsOpen ? 'btn-on' : '')} data-testid="rooms-btn" onClick={() => { click(); s.openRooms(); }}>🖼 {lang === 'ar' ? 'القاعات المصورة' : 'Photo Halls'}</button>
         <div className="flex-1" />
         <div className="glass flex items-center gap-3 rounded-full px-3 py-1.5 text-xs sm:text-sm" data-testid="counters">
           <span title={t('relicsFound')}>✦ {t('relics')} <b data-testid="relic-count" className="gold">{found}/{RELICS.length}</b></span>
@@ -70,10 +72,11 @@ export function Hud() {
         <button className="btn" data-testid="fav-btn" onClick={() => s.toggleFav()} aria-label={t('favorites')}>★ {s.favorites.size}</button>
         <button className="btn" data-testid="lang-btn" onClick={() => s.setLang(lang === 'en' ? 'ar' : 'en')} aria-label="language">{t('langBtn')}</button>
         <button className="btn" data-testid="mute-btn" onClick={() => s.toggleMute()} aria-label={s.muted ? t('unmute') : t('mute')}>{s.muted ? '🔇' : '🔊'}</button>
+        <button className="btn sm:hidden" data-testid="settings-btn" onClick={() => setSettings(!settings)} aria-label={t('quality')}>⚙</button>
         <button className="btn" data-testid="help-btn" onClick={() => s.toggleHelp()} aria-label={t('help')}>?</button>
       </div>
       {/* second row: quality + mood */}
-      <div className="pointer-events-auto absolute end-2 top-[3.4rem] z-10 flex flex-col items-end gap-1 sm:end-3 sm:top-[3.9rem]">
+      <div className={'pointer-events-auto absolute end-2 top-[6.2rem] z-10 flex-col items-end gap-1 sm:end-3 sm:top-[3.9rem] sm:flex ' + (settings ? 'flex' : 'hidden')}>
         <div className="glass flex items-center gap-1 rounded-full p-0.5 text-xs" data-testid="quality">
           <span className="px-2 text-ahly-paper/60">{t('quality')}</span>
           {quals.map((q) => <button key={q} data-testid={'q-' + q} className={'btn !px-2 !py-0.5 !text-xs !border-0 ' + (s.quality === q ? 'btn-on' : '')} onClick={() => s.setQuality(q)}>{t(q)}</button>)}

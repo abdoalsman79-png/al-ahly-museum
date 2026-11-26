@@ -1,0 +1,13 @@
+import puppeteer from 'puppeteer-core';
+const url = process.argv[2]; const out = '/tmp/t2'; import fs from 'fs'; fs.mkdirSync(out,{recursive:true});
+const b = await puppeteer.launch({ executablePath: '/usr/bin/google-chrome', headless: 'new', args: ['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist'] });
+const p = await b.newPage(); await p.setViewport({width:1440,height:900});
+const logs=[]; p.on('console',m=>logs.push(m.type()+': '+m.text().slice(0,160))); p.on('pageerror',e=>logs.push('ERR '+String(e).slice(0,200)));
+await p.goto(url,{waitUntil:'load'}); await p.evaluate(()=>localStorage.setItem('ahly-quality','low')); await p.reload({waitUntil:'load'});
+await p.waitForSelector('[data-testid=enter]:not([disabled])',{timeout:60000}); await p.click('[data-testid=enter]'); await new Promise(r=>setTimeout(r,1500));
+const S=(f)=>p.evaluate(f);
+await S(()=>window.__museum.store.getState().inspect({kind:'trophy',id:'cl-2012'})); await new Promise(r=>setTimeout(r,2500));
+console.log('drawer?', await S(()=>!!document.querySelector('[data-testid=drawer]')), 'canvases', await S(()=>document.querySelectorAll('canvas').length));
+await p.screenshot({path:out+'/dossier.png'});
+await p.keyboard.press('Escape'); await new Promise(r=>setTimeout(r,1500)); console.log('after esc', await S(()=>window.__museum.store.getState().selected));
+console.log(logs.slice(0,15).join('\n')); await b.close();

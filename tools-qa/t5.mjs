@@ -1,0 +1,14 @@
+import puppeteer from 'puppeteer-core';
+const url=process.argv[2]; const out='/tmp/t5'; import fs from 'fs'; fs.mkdirSync(out,{recursive:true});
+const b=await puppeteer.launch({executablePath:'/usr/bin/google-chrome',headless:'new',args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
+const p=await b.newPage(); await p.setViewport({width:390,height:844,isMobile:true,hasTouch:true});
+const logs=[]; p.on('console',m=>{if(m.type()==='error'&&!/insights|404/.test(m.text()))logs.push(m.text().slice(0,140))}); p.on('pageerror',e=>logs.push('ERR '+String(e).slice(0,200)));
+await p.goto(url,{waitUntil:'load'}); await p.evaluate(()=>localStorage.setItem('ahly-quality','low')); await p.reload({waitUntil:'load'});
+await p.waitForSelector('[data-testid=enter]:not([disabled])',{timeout:60000}); await p.click('[data-testid=enter]'); await new Promise(r=>setTimeout(r,1000));
+const S=(f,...a)=>p.evaluate(f,...a); const w=(t)=>new Promise(r=>setTimeout(r,t));
+await p.screenshot({path:out+'/hud.png'}); console.log('touchpad', await S(()=>!!document.querySelector('[data-testid=touchpad]')));
+await S(()=>window.__museum.store.getState().openRooms(4)); await w(2000); await p.screenshot({path:out+'/rooms.png'});
+await S(()=>document.querySelector('[data-testid=hotspot]').click()); await w(2000); await p.screenshot({path:out+'/drawer.png'});
+await p.keyboard.press('Escape'); await S(()=>window.__museum.store.getState().closeRooms()); await w(400);
+await S(()=>window.__museum.store.getState().inspect({kind:'trophy',id:'cl-2012'})); await w(2000); await p.screenshot({path:out+'/dossier.png'});
+console.log('ERRS',JSON.stringify([...new Set(logs)])); await b.close();

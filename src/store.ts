@@ -23,19 +23,19 @@ const initQuality = (): Quality => {
 interface S {
   lang: Lang; started: boolean; mode: Mode; quality: Quality; mood: Mood; muted: boolean;
   era: EraId | 'all'; selected: Sel | null; focus: Sel | null; helpOpen: boolean; favOpen: boolean;
-  libraryOpen: boolean; libTab: LibTab; tourIndex: number; tourAuto: boolean; zone: string; toast: string | null;
+  libraryOpen: boolean; roomsOpen: boolean; roomIndex: number; libTab: LibTab; tourIndex: number; tourAuto: boolean; zone: string; toast: string | null;
   relicsFound: Set<string>; visited: Set<string>; favorites: Set<string>; justFound: string | null; touch: boolean;
   setLang: (l: Lang) => void; start: () => void; setMode: (m: Mode) => void; setQuality: (q: Quality) => void;
   setMood: (m: Mood) => void; toggleMute: () => void; setEra: (e: EraId | 'all') => void;
   inspect: (s: Sel | null) => void; setFocus: (s: Sel | null) => void; toggleHelp: (v?: boolean) => void; toggleFav: (v?: boolean) => void;
   openLibrary: (tab?: LibTab) => void; closeLibrary: () => void; setTour: (i: number, auto?: boolean) => void;
   setZone: (z: string) => void; showToast: (m: string | null) => void; foundRelic: (id: string) => boolean;
-  toggleFavorite: (key: string) => void; setTouch: (t: boolean) => void;
+  openRooms: (i?: number) => void; closeRooms: () => void; setRoom: (i: number) => void; toggleFavorite: (key: string) => void; setTouch: (t: boolean) => void;
 }
 
 export const useStore = create<S>((set, get) => ({
   lang: initLang(), started: false, mode: 'walk', quality: initQuality(), mood: 'heritage', muted: false,
-  era: 'all', selected: null, focus: null, helpOpen: false, favOpen: false, libraryOpen: false, libTab: 'chronicles',
+  era: 'all', selected: null, focus: null, helpOpen: false, favOpen: false, libraryOpen: false, roomsOpen: false, roomIndex: 0, libTab: 'chronicles',
   tourIndex: 0, tourAuto: false, zone: 'nave', toast: null,
   relicsFound: new Set(load('ahly-relics')), visited: new Set(load('ahly-visited')), favorites: new Set(load('ahly-favs')),
   justFound: null, touch: false,
@@ -65,6 +65,9 @@ export const useStore = create<S>((set, get) => ({
     const r = new Set(s.relicsFound); r.add(id); save('ahly-relics', r);
     set({ relicsFound: r, justFound: id }); return true;
   },
+  openRooms: (i) => set((s) => ({ roomsOpen: true, roomIndex: i ?? s.roomIndex, selected: null, helpOpen: false, favOpen: false, libraryOpen: false, mode: s.mode === 'library' ? 'walk' : s.mode })),
+  closeRooms: () => set({ roomsOpen: false }),
+  setRoom: (roomIndex) => set({ roomIndex }),
   toggleFavorite: (key) => { const f = new Set(get().favorites); f.has(key) ? f.delete(key) : f.add(key); save('ahly-favs', f); set({ favorites: f }); },
   setTouch: (touch) => set({ touch })
 }));
